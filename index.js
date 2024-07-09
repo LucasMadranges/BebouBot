@@ -37,6 +37,16 @@ client.on('messageCreate', message => {
     }
 });
 
+client.on("messageCreate", message => {
+    // Ignore les messages du bot lui-même
+    if (message.author.bot) return;
+
+    // Si le message est "!ping"
+    if (message.content === "Je t'aime bebou") {
+        message.channel.send(`Moi aussi je t'aime <@251991635674529793>`);
+    }
+});
+
 client.login(TOKEN).catch(error => {
     console.error('Erreur de connexion :', error);
 });
