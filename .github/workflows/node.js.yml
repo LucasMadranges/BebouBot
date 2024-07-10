@@ -30,5 +30,9 @@ jobs:
     - run: npm run build --if-present
     - name: Change directory
       run: cd /home/lucasmdr/actions-runner/_work/BebouBot/BebouBot/
-    - name: Restart server
-      run: pm2 restart 0 --update-env
+    - name: Stop server
+      run: pm2 stop beboubot
+    - name: Init bot commands
+      run: npm run start:command
+    - name: Relaunch server
+      run: pm2 start beboubot --update-env
