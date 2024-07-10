@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits, Partials } = require('discord.js');
+const {Client, GatewayIntentBits, Message} = require("discord.js");
 const dotenv = require("dotenv");
 
 dotenv.config();
@@ -7,46 +7,27 @@ const TOKEN = process.env.DISCORD_TOKEN;
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
-        GatewayIntentBits.GuildMessages, 
-        GatewayIntentBits.MessageContent],
-    partials: [Partials.Channel],
+    ],
 });
 
-client.once('ready', () => {
+client.once("ready", () => {
     console.log(`Connecté en tant que ${client.user.tag}`);
 });
 
-client.on('messageCreate', message => {
-    // Ignore les messages du bot lui-même
-    if (message.author.bot) return;
+client.on("interactionCreate", async interaction => {
+    if (!interaction.isCommand()) return;
 
-    // Si le message est "!ping"
-    if (message.content === '!ping') {
-        message.channel.send('Pong!');
-    }
-});
+    const {commandName} = interaction;
 
-client.on('messageCreate', message => {
-    // Ignore les messages du bot lui-même
-    if (message.author.bot) return;
-
-    // Si le message est "!ping"
-    if (message.content === '!theotime') {
-        message.channel.send('Théotime est un gros gay!');
-        message.channel.send(`N'est-ce pas <@1052117306081284128>`);
-    }
-});
-
-client.on("messageCreate", message => {
-    // Ignore les messages du bot lui-même
-    if (message.author.bot) return;
-
-    // Si le message est "!ping"
-    if (message.content === "Je t'aime bebou") {
-        message.channel.send(`Moi aussi je t'aime <@251991635674529793>`);
+    if (commandName === "ping") {
+        await interaction.reply("Pong!");
+    } else if (commandName === "hello") {
+        await interaction.reply("Hello, world!");
+    } else if (commandName === "theotime") {
+        await interaction.reply("Théotime est un gros gay!");
     }
 });
 
 client.login(TOKEN).catch(error => {
-    console.error('Erreur de connexion :', error);
+    console.error("Erreur de connexion :", error);
 });
