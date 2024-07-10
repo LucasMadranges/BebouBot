@@ -1,33 +1,28 @@
+require("dotenv").config();
 const {REST, Routes} = require("discord.js");
-const dotenv = require("dotenv");
+const fs = require("fs");
+const path = require("path");
 
-dotenv.config();
+const commands = [];
+const commandFiles = fs.readdirSync(path.join(__dirname, "commands")).filter(file => file.endsWith(".js"));
 
-const TOKEN = process.env.DISCORD_TOKEN;
-const CLIENT_ID = process.env.CLIENT_ID;
-const GUILD_ID = process.env.GUILD_ID;
+for (const file of commandFiles) {
+    const command = require(`./commands/${file}`);
+    if ("data" in command && "execute" in command) {
+        commands.push(command.data.toJSON());
+    } else {
+        console.log(`[WARNING] La commande dans ${file} est incorrecte et n'a pas de propriété 'data' ou 'execute'.`);
+    }
+}
 
-const commands = [
-    {
-        name: "ping",
-        description: "Répond avec Pong!",
-    }, {
-        name: "hello",
-        description: "Répond avec Hello, world!",
-    }, {
-        name: "theotime",
-        description: "Répond avec Théotime est un gros gay!",
-    },
-];
-
-const rest = new REST({version: "10"}).setToken(TOKEN);
+const rest = new REST({version: "10"}).setToken(process.env.DISCORD_TOKEN);
 
 (async () => {
     try {
         console.log("Enregistrement des commandes slash.");
 
         await rest.put(
-            Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID),
+            Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.GUILD_ID),
             {body: commands},
         );
 
