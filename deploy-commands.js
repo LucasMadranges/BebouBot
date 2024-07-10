@@ -32,7 +32,9 @@ const rest = new REST({version: "10"}).setToken(TOKEN);
         );
 
         console.log("Commandes slash enregistrées avec succès.");
+        process.exit(0); // Succès
     } catch (error) {
         console.error("Erreur lors de l'enregistrement des commandes slash:", error);
+        process.exit(1); // Erreur
     }
 })();
