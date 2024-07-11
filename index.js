@@ -1,7 +1,13 @@
-require("dotenv").config();
-const {Client, Collection, GatewayIntentBits} = require("discord.js");
-const fs = require("fs");
-const path = require("path");
+import {Client, Collection, GatewayIntentBits} from "discord.js";
+import fs from "fs";
+import path from "path";
+import {fileURLToPath} from "url";
+import {config} from "dotenv";
+
+config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const client = new Client({
     intents: [GatewayIntentBits.Guilds],
@@ -11,7 +17,7 @@ client.commands = new Collection();
 const commandFiles = fs.readdirSync(path.join(__dirname, "commands")).filter(file => file.endsWith(".js"));
 
 for (const file of commandFiles) {
-    const command = require(`./commands/${file}`);
+    const command = await import(`./commands/${file}`);
     if ("data" in command && "execute" in command) {
         client.commands.set(command.data.name, command);
     } else {
@@ -41,6 +47,6 @@ client.on("interactionCreate", async interaction => {
     }
 });
 
-client.login(process.env.TOKEN).catch(error => {
+client.login(process.env.DISCORD_TOKEN).catch(error => {
     console.error("Erreur de connexion :", error);
 });
